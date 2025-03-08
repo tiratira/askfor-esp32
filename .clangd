@@ -1,0 +1,5 @@
+CompileFlags:
+    Remove: ['-mdisable-hardware-atomics', '-fno-reorder-functions', '-mlongcalls', '-fstrict-volatile-bitfields', '-fno-tree-switch-conversion','-fno-shrink-wrap']
+Diagnostics:
+  Suppress:
+    - drv_invalid_riscv_arch_name
