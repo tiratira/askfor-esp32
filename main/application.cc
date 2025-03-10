@@ -332,7 +332,7 @@ void Application::Start() {
     input_resampler_.Configure(codec->input_sample_rate(), 16000);
     reference_resampler_.Configure(codec->input_sample_rate(), 16000);
   }
-  codec->OnInputReady([this, codec]() {
+  codec->OnInputReady([this]() {
     BaseType_t higher_priority_task_woken = pdFALSE;
     xEventGroupSetBitsFromISR(event_group_, AUDIO_INPUT_READY_EVENT,
                               &higher_priority_task_woken);
@@ -429,7 +429,7 @@ void Application::Start() {
         auto text = cJSON_GetObjectItem(root, "text");
         if (text != NULL) {
           ESP_LOGI(TAG, "<< %s", text->valuestring);
-          Schedule([this, display, message = std::string(text->valuestring)]() {
+          Schedule([display, message = std::string(text->valuestring)]() {
             display->SetChatMessage("assistant", message.c_str());
           });
         }
@@ -438,17 +438,16 @@ void Application::Start() {
       auto text = cJSON_GetObjectItem(root, "text");
       if (text != NULL) {
         ESP_LOGI(TAG, ">> %s", text->valuestring);
-        Schedule([this, display, message = std::string(text->valuestring)]() {
+        Schedule([display, message = std::string(text->valuestring)]() {
           display->SetChatMessage("user", message.c_str());
         });
       }
     } else if (strcmp(type->valuestring, "llm") == 0) {
       auto emotion = cJSON_GetObjectItem(root, "emotion");
       if (emotion != NULL) {
-        Schedule(
-            [this, display, emotion_str = std::string(emotion->valuestring)]() {
-              display->SetEmotion(emotion_str.c_str());
-            });
+        Schedule([display, emotion_str = std::string(emotion->valuestring)]() {
+          display->SetEmotion(emotion_str.c_str());
+        });
       }
     } else if (strcmp(type->valuestring, "iot") == 0) {
       auto commands = cJSON_GetObjectItem(root, "commands");
@@ -563,7 +562,7 @@ void Application::OnClockTimer() {
     // the device is idle
     if (ota_.HasServerTime()) {
       if (device_state_ == kDeviceStateIdle) {
-        Schedule([this]() {
+        Schedule([]() {
           // Set status to clock "HH:MM"
           time_t now = time(NULL);
           char time_str[64];
