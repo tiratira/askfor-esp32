@@ -403,40 +403,40 @@ void WifiConfigurationAp::StartWebServer()
     };
     ESP_ERROR_CHECK(httpd_register_uri_handler(server_, &reboot));
 
-    auto captive_portal_handler = [](httpd_req_t *req) -> esp_err_t {
-        auto *this_ = static_cast<WifiConfigurationAp *>(req->user_ctx);
-        std::string url = this_->GetWebServerUrl() + "/?lang=" + this_->language_;
-        // Set content type to prevent browser warnings
-        httpd_resp_set_type(req, "text/html");
-        httpd_resp_set_status(req, "302 Found");
-        httpd_resp_set_hdr(req, "Location", url.c_str());
-        httpd_resp_send(req, NULL, 0);
-        return ESP_OK;
-    };
+    // auto captive_portal_handler = [](httpd_req_t *req) -> esp_err_t {
+    //     auto *this_ = static_cast<WifiConfigurationAp *>(req->user_ctx);
+    //     std::string url = this_->GetWebServerUrl() + "/?lang=" + this_->language_;
+    //     // Set content type to prevent browser warnings
+    //     httpd_resp_set_type(req, "text/html");
+    //     httpd_resp_set_status(req, "302 Found");
+    //     httpd_resp_set_hdr(req, "Location", url.c_str());
+    //     httpd_resp_send(req, NULL, 0);
+    //     return ESP_OK;
+    // };
 
-    // Register all common captive portal detection endpoints
-    const char* captive_portal_urls[] = {
-        "/hotspot-detect.html",    // Apple
-        "/generate_204",           // Android
-        "/mobile/status.php",      // Android
-        "/check_network_status.txt", // Windows
-        "/ncsi.txt",              // Windows
-        "/fwlink/",               // Microsoft
-        "/connectivity-check.html", // Firefox
-        "/success.txt",           // Various
-        "/portal.html",           // Various
-        "/library/test/success.html" // Apple
-    };
+    // // Register all common captive portal detection endpoints
+    // const char* captive_portal_urls[] = {
+    //     "/hotspot-detect.html",    // Apple
+    //     "/generate_204",           // Android
+    //     "/mobile/status.php",      // Android
+    //     "/check_network_status.txt", // Windows
+    //     "/ncsi.txt",              // Windows
+    //     "/fwlink/",               // Microsoft
+    //     "/connectivity-check.html", // Firefox
+    //     "/success.txt",           // Various
+    //     "/portal.html",           // Various
+    //     "/library/test/success.html" // Apple
+    // };
 
-    for (const auto& url : captive_portal_urls) {
-        httpd_uri_t redirect_uri = {
-            .uri = url,
-            .method = HTTP_GET,
-            .handler = captive_portal_handler,
-            .user_ctx = this
-        };
-        ESP_ERROR_CHECK(httpd_register_uri_handler(server_, &redirect_uri));
-    }
+    // for (const auto& url : captive_portal_urls) {
+    //     httpd_uri_t redirect_uri = {
+    //         .uri = url,
+    //         .method = HTTP_GET,
+    //         .handler = captive_portal_handler,
+    //         .user_ctx = this
+    //     };
+    //     ESP_ERROR_CHECK(httpd_register_uri_handler(server_, &redirect_uri));
+    // }
 
     ESP_LOGI(TAG, "Web server started");
 }

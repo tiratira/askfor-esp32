@@ -96,7 +96,8 @@ private:
         volume -= 10;
       volume = volume / 10 * 10;
       codec->SetOutputVolume(volume);
-      app.PlaySound(Lang::Sounds::P3_TICK);
+      if (app.GetDeviceState() == kDeviceStateIdle)
+        app.PlaySound(Lang::Sounds::P3_TICK);
     });
 
     volume_up_button_.OnClick([&]() {
@@ -107,7 +108,8 @@ private:
         volume += 10;
       volume = volume / 10 * 10;
       codec->SetOutputVolume(volume);
-      app.PlaySound(Lang::Sounds::P3_TICK);
+      if (app.GetDeviceState() == kDeviceStateIdle)
+        app.PlaySound(Lang::Sounds::P3_TICK);
     });
   }
 
