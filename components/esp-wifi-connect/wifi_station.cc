@@ -88,8 +88,41 @@ void WifiStation::Start() {
 
   // Initialize the WiFi stack in station mode
   wifi_init_config_t cfg = WIFI_INIT_CONFIG_DEFAULT();
-  cfg.nvs_enable = false;
+  // cfg.nvs_enable = false;
   ESP_ERROR_CHECK(esp_wifi_init(&cfg));
+
+  // wifi_config_t wifi_config{};
+  // wifi_config = {
+  //     .sta =
+  //         {
+  //             .ssid = "94-1-Main-2.5G",
+  //             .password = "86363369",
+  //             // .ssid = "ASUS_1912_2G",
+  //             // .password = "LG18115388099",
+  //             // .ssid = "HUAWEI-G10S1O",
+  //             // .password = "18912190221",
+  //             // .ssid = "SAAT-SX",
+  //             // .password = "Tt123456",
+  //             /* Authmode threshold resets to WPA2 as default if password
+  //              * matches WPA2 standards (password len => 8). If you want to
+  //              * connect the device to deprecated WEP/WPA networks, Please
+  //              * set the threshold value to WIFI_AUTH_WEP/WIFI_AUTH_WPA_PSK
+  //              * and set the password with length and format matching to
+  //              * WIFI_AUTH_WEP/WIFI_AUTH_WPA_PSK standards.
+  //              */
+  //             .threshold =
+  //                 {
+  //                     .authmode = WIFI_AUTH_WPA2_PSK,
+  //                 },
+  //         },
+  // };
+
+  // ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
+  // ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config));
+
+  // ESP_LOGI(TAG, "Start connect to %s", wifi_config.sta.ssid);
+  // ESP_ERROR_CHECK(esp_wifi_start());
+
   ESP_ERROR_CHECK(esp_wifi_set_mode(WIFI_MODE_STA));
   ESP_ERROR_CHECK(esp_wifi_start());
 
@@ -166,8 +199,7 @@ void WifiStation::StartConnect() {
     on_connect_(ssid_);
   }
 
-  wifi_config_t wifi_config;
-  bzero(&wifi_config, sizeof(wifi_config));
+  wifi_config_t wifi_config{};
   strcpy((char *)wifi_config.sta.ssid, ap_record.ssid.c_str());
   strcpy((char *)wifi_config.sta.password, ap_record.password.c_str());
   wifi_config.sta.channel = ap_record.channel;
