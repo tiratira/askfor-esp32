@@ -104,6 +104,8 @@ choice BOARD_TYPE
         bool "AtomMatrix + Echo Base"
     config BOARD_TYPE_ASKFOR_V1
         bool "Askfor V1"
+    config BOARD_TYPE_ASKFOR_V2
+        bool "Askfor V2"
     config BOARD_TYPE_XMINI_C3
         bool "虾哥 Mini C3"
     config BOARD_TYPE_ESP32S3_KORVO2_V3
