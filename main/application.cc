@@ -353,7 +353,7 @@ void Application::Start() {
         app->MainLoop();
         vTaskDelete(NULL);
       },
-      "main_loop", 4096 * 2, this, 3, nullptr);
+      "main_loop", 4096 * 2, this, 4, nullptr);
 
   /* Wait for the network to be ready */
   board.StartNetwork();
@@ -490,14 +490,9 @@ void Application::Start() {
                             });
     });
   });
-#endif
-
-#if CONFIG_USE_WAKE_WORD_DETECT
-  wake_word_detect_.Initialize(codec->input_channels(),
-                               codec->input_reference());
-  wake_word_detect_.OnVadStateChange([this](bool speaking) {
-    Schedule([this, speaking]() {
-      if (device_state_ == kDeviceStateListening) {
+  audio_processor_.OnVadStateChange([this](bool speaking) {
+    if (device_state_ == kDeviceStateListening) {
+      Schedule([this, speaking]() {
         if (speaking) {
           voice_detected_ = true;
         } else {
@@ -505,10 +500,14 @@ void Application::Start() {
         }
         auto led = Board::GetInstance().GetLed();
         led->OnStateChanged();
-      }
-    });
+      });
+    }
   });
+#endif
 
+#if CONFIG_USE_WAKE_WORD_DETECT
+  wake_word_detect_.Initialize(codec->input_channels(),
+                               codec->input_reference());
   wake_word_detect_.OnWakeWordDetected([this](const std::string &wake_word) {
     Schedule([this, &wake_word]() {
       if (device_state_ == kDeviceStateIdle) {
@@ -535,9 +534,6 @@ void Application::Start() {
       } else if (device_state_ == kDeviceStateActivating) {
         SetDeviceState(kDeviceStateIdle);
       }
-
-      // Resume detection
-      wake_word_detect_.StartDetection();
     });
   });
   wake_word_detect_.StartDetection();
@@ -758,6 +754,9 @@ void Application::SetDeviceState(DeviceState state) {
 #if CONFIG_USE_AUDIO_PROCESSOR
     audio_processor_.Stop();
 #endif
+#if CONFIG_USE_WAKE_WORD_DETECT
+    wake_word_detect_.StartDetection();
+#endif
     break;
   case kDeviceStateConnecting:
     display->SetStatus(Lang::Strings::CONNECTING);
@@ -772,6 +771,9 @@ void Application::SetDeviceState(DeviceState state) {
 #if CONFIG_USE_AUDIO_PROCESSOR
     audio_processor_.Start();
 #endif
+#if CONFIG_USE_WAKE_WORD_DETECT
+    wake_word_detect_.StopDetection();
+#endif
     UpdateIotStates();
     if (previous_state == kDeviceStateSpeaking) {
       // FIXME: Wait for the speaker to empty the buffer
@@ -784,6 +786,9 @@ void Application::SetDeviceState(DeviceState state) {
     codec->EnableOutput(true);
 #if CONFIG_USE_AUDIO_PROCESSOR
     audio_processor_.Stop();
+#endif
+#if CONFIG_USE_WAKE_WORD_DETECT
+    wake_word_detect_.StartDetection();
 #endif
     break;
   default:
