@@ -167,16 +167,16 @@ void WifiConfigurationAp::StartWebServer()
     ESP_ERROR_CHECK(httpd_start(&server_, &config));
 
     // Register the index.html file
-    httpd_uri_t index_html = {
-        .uri = "/",
-        .method = HTTP_GET,
-        .handler = [](httpd_req_t *req) -> esp_err_t {
-            httpd_resp_send(req, index_html_start, strlen(index_html_start));
-            return ESP_OK;
-        },
-        .user_ctx = NULL
-    };
-    ESP_ERROR_CHECK(httpd_register_uri_handler(server_, &index_html));
+    // httpd_uri_t index_html = {
+    //     .uri = "/",
+    //     .method = HTTP_GET,
+    //     .handler = [](httpd_req_t *req) -> esp_err_t {
+    //         httpd_resp_send(req, index_html_start, strlen(index_html_start));
+    //         return ESP_OK;
+    //     },
+    //     .user_ctx = NULL
+    // };
+    // ESP_ERROR_CHECK(httpd_register_uri_handler(server_, &index_html));
 
     // Register the /saved/list URI
     httpd_uri_t saved_list = {

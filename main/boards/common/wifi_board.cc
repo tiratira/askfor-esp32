@@ -41,7 +41,7 @@ void WifiBoard::EnterWifiConfigMode() {
 
   auto &wifi_ap = WifiConfigurationAp::GetInstance();
   wifi_ap.SetLanguage(Lang::CODE);
-  wifi_ap.SetSsidPrefix("ASKFOR");
+  wifi_ap.SetSsidPrefix("ZHIGE");
   wifi_ap.Start();
 
   // 显示 WiFi 配置 AP 的 SSID 和 Web 服务器 URL
