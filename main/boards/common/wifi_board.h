@@ -6,9 +6,12 @@
 class WifiBoard : public Board {
 protected:
     bool wifi_config_mode_ = false;
+    bool bt_config_mode_ = false;
 
     WifiBoard();
     void EnterWifiConfigMode();
+    // 蓝牙配置
+    void EnterBTConfigMode();
     virtual std::string GetBoardJson() override;
 
 public:

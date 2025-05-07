@@ -22,6 +22,8 @@
 #include <wifi_configuration_ap.h>
 #include <wifi_station.h>
 
+#include "BLEConfigServer.h"
+
 static const char *TAG = "WifiBoard";
 
 WifiBoard::WifiBoard() {
@@ -56,6 +58,21 @@ void WifiBoard::EnterWifiConfigMode() {
   codec->SetOutputVolume(80);
   application.Alert(Lang::Strings::WIFI_CONFIG_MODE, hint.c_str(), "",
                     Lang::Sounds::P3_WIFICONFIG);
+
+  // Wait forever until reset after configuration
+  while (true) {
+    int free_sram = heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
+    int min_free_sram = heap_caps_get_minimum_free_size(MALLOC_CAP_INTERNAL);
+    ESP_LOGI(TAG, "Free internal: %u minimal internal: %u", free_sram,
+             min_free_sram);
+    vTaskDelay(pdMS_TO_TICKS(10000));
+  }
+}
+
+void WifiBoard::EnterBTConfigMode() {
+  auto &ble_server = BLEConfigServer::GetInstance();
+  ble_server.SetPrefix("ZHIGE");
+  ble_server.Start();
 
   // Wait forever until reset after configuration
   while (true) {
