@@ -61,10 +61,10 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event,
 // #define GATTS_DESCR_UUID_TEST_B     0x2222
 // #define GATTS_NUM_HANDLE_TEST_B     4
 
-#define TEST_DEVICE_NAME           "Remote"
+#define TEST_DEVICE_NAME           "ZHIGE"
 #define TEST_MANUFACTURER_DATA_LEN 17
 
-#define GATTS_DEMO_CHAR_VAL_LEN_MAX 0x40
+#define GATTS_DEMO_CHAR_VAL_LEN_MAX 0x100
 
 #define PREPARE_BUF_MAX_SIZE 1024
 
@@ -440,16 +440,27 @@ static void gatts_profile_a_event_handler(esp_gatts_cb_event_t event,
              param->read.conn_id, param->read.trans_id, param->read.handle);
 
     if (ble_read_cb) {
-      ble_read_cb();
+      if (!param->read.is_long) {
+        ble_read_cb();
+      } else if (param->read.offset == 0) {
+        ble_read_cb();
+      }
     }
+    uint32_t prop_len = strlen((const char *)ble_prop_buf);
+
     esp_gatt_rsp_t rsp;
     memset(&rsp, 0, sizeof(esp_gatt_rsp_t));
     rsp.attr_value.handle = param->read.handle;
-    rsp.attr_value.len = ble_prop_buf_len;
-    for (size_t i = 0; i < ble_prop_buf_len; i++) {
-      rsp.attr_value.value[i] = ble_prop_buf[i];
+    if (!param->read.is_long) {
+      rsp.attr_value.len = prop_len;
+      memcpy(rsp.attr_value.value, ble_prop_buf, prop_len);
+    } else {
+      int remaining_read = prop_len - param->read.offset;
+      rsp.attr_value.len = (remaining_read) > 22 ? 22 : remaining_read;
+      rsp.attr_value.offset = param->read.offset;
+      memcpy(rsp.attr_value.value, ble_prop_buf + param->read.offset,
+             rsp.attr_value.len);
     }
-
     esp_ble_gatts_send_response(gatts_if, param->read.conn_id,
                                 param->read.trans_id, ESP_GATT_OK, &rsp);
     break;

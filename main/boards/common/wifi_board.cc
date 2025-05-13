@@ -70,9 +70,18 @@ void WifiBoard::EnterWifiConfigMode() {
 }
 
 void WifiBoard::EnterBTConfigMode() {
+  auto &application = Application::GetInstance();
+  application.SetDeviceState(kDeviceStateWifiConfiguring);
   auto &ble_server = BLEConfigServer::GetInstance();
   ble_server.SetPrefix("ZHIGE");
   ble_server.Start();
+
+  // 播报配置 WiFi 的提示
+  std::string hint = "请使用手机连接配置网络";
+  auto *codec = GetAudioCodec();
+  codec->SetOutputVolume(80);
+  application.Alert(Lang::Strings::WIFI_CONFIG_MODE, hint.c_str(), "",
+                    Lang::Sounds::P3_WIFICONFIG);
 
   // Wait forever until reset after configuration
   while (true) {
@@ -87,7 +96,8 @@ void WifiBoard::EnterBTConfigMode() {
 void WifiBoard::StartNetwork() {
   // User can press BOOT button while starting to enter WiFi configuration mode
   if (wifi_config_mode_) {
-    EnterWifiConfigMode();
+    // EnterWifiConfigMode();
+    EnterBTConfigMode();
     return;
   }
 
@@ -96,7 +106,8 @@ void WifiBoard::StartNetwork() {
   auto ssid_list = ssid_manager.GetSsidList();
   if (ssid_list.empty()) {
     wifi_config_mode_ = true;
-    EnterWifiConfigMode();
+    // EnterWifiConfigMode();
+    EnterBTConfigMode();
     return;
   }
 
@@ -126,7 +137,8 @@ void WifiBoard::StartNetwork() {
   if (!wifi_station.WaitForConnected(60 * 1000)) {
     wifi_station.Stop();
     wifi_config_mode_ = true;
-    EnterWifiConfigMode();
+    // EnterWifiConfigMode();
+    EnterBTConfigMode();
     return;
   }
 }

@@ -23,11 +23,15 @@ set(SOURCES "audio_codecs/audio_codec.cc"
 set(INCLUDE_DIRS "." "display" "audio_codecs" "protocols" "audio_processing")
 
 # 添加 IOT 相关文件
-file(GLOB IOT_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/iot/things/*.cc)
+file(GLOB IOT_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/iot/things/*.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/iot/things/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/iot/things/*.cpp)
 list(APPEND SOURCES ${IOT_SOURCES})
 
 # 添加板级公共文件
-file(GLOB BOARD_COMMON_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/boards/common/*.cc)
+file(GLOB BOARD_COMMON_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/boards/common/*.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/boards/common/*.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/boards/common/*.cpp)
 list(APPEND SOURCES ${BOARD_COMMON_SOURCES})
 list(APPEND INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/boards/common)
 
@@ -39,7 +43,7 @@ elseif(CONFIG_BOARD_TYPE_BREAD_COMPACT_ML307)
 elseif(CONFIG_BOARD_TYPE_BREAD_COMPACT_ESP32)
     set(BOARD_TYPE "bread-compact-esp32")
 elseif(CONFIG_BOARD_TYPE_BREAD_COMPACT_ESP32_LCD)
-    set(BOARD_TYPE "bread-compact-esp32-lcd")    
+    set(BOARD_TYPE "bread-compact-esp32-lcd")
 elseif(CONFIG_BOARD_TYPE_DF_K10)
     set(BOARD_TYPE "df-k10")
 elseif(CONFIG_BOARD_TYPE_ESP_BOX_3)
@@ -84,7 +88,7 @@ elseif(CONFIG_BOARD_TYPE_ATOMMATRIX_ECHO_BASE)
     set(BOARD_TYPE "atommatrix-echo-base")
 elseif(CONFIG_BOARD_TYPE_ASKFOR_V1)
     set(BOARD_TYPE "askfor-v1")
-    elseif(CONFIG_BOARD_TYPE_ASKFOR_V2)
+elseif(CONFIG_BOARD_TYPE_ASKFOR_V2)
     set(BOARD_TYPE "askfor-v2")
 elseif(CONFIG_BOARD_TYPE_XMINI_C3)
     set(BOARD_TYPE "xmini-c3")
@@ -110,7 +114,7 @@ elseif(CONFIG_BOARD_TYPE_LILYGO_T_CAMERAPLUS_S3)
     set(BOARD_TYPE "lilygo-t-cameraplus-s3")
 elseif(CONFIG_BOARD_TYPE_MOVECALL_MOJI_ESP32S3)
     set(BOARD_TYPE "movecall-moji-esp32s3")
-    elseif(CONFIG_BOARD_TYPE_MOVECALL_CUICAN_ESP32S3)
+elseif(CONFIG_BOARD_TYPE_MOVECALL_CUICAN_ESP32S3)
     set(BOARD_TYPE "movecall-cuican-esp32s3")
 elseif(CONFIG_BOARD_TYPE_ATK_DNESP32S3)
     set(BOARD_TYPE "atk-dnesp32s3")
@@ -135,7 +139,7 @@ elseif(CONFIG_BOARD_TYPE_XINGZHI_Cube_1_54TFT_ML307)
 elseif(CONFIG_BOARD_TYPE_SENSECAP_WATCHER)
     set(BOARD_TYPE "sensecap-watcher")
 elseif(CONFIG_BOARD_TYPE_ESP32_CGC)
-    set(BOARD_TYPE "esp32-cgc")  
+    set(BOARD_TYPE "esp32-cgc")
 endif()
 file(GLOB BOARD_SOURCES
     ${CMAKE_CURRENT_SOURCE_DIR}/boards/${BOARD_TYPE}/*.cc

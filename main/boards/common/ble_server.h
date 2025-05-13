@@ -2,6 +2,10 @@
 
 #include <stdint.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * @brief 蓝牙服务写回调函数
  *
@@ -35,3 +39,7 @@ typedef struct ble_server_config_t {
  * @param ble_config 蓝牙服务配置结构体
  */
 void ble_server_init(const ble_server_config *ble_config);
+
+#ifdef __cplusplus
+}
+#endif
